@@ -12,4 +12,4 @@ def iterative_traditional_bubble_sort(arr: list):
     return arr
 
 arr = [6, 5, 4, 4, 0, 1, 2, 3]
-print(iterative_traditional_bubble_sort(arr))
+iterative_traditional_bubble_sort(arr)
