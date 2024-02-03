@@ -51,4 +51,4 @@ def recursive_traditional_bubble_sort(arr, n=None):
     return arr
 
     
-print(recursive_traditional_bubble_sort(list(range(0, -5, -1))))
+print(recursive_traditional_bubble_sort([-3, -1, -2]))
