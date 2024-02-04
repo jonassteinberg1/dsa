@@ -1,22 +1,14 @@
 def iterative_selection_sort(arr: list):
     i = 0
     j = i+1
-    min = arr[i]
+    min_index = i
     while i < len(arr)-1:
         while j < len(arr):
-            if arr[j] < min:
-                min = arr[j]
-                arr[j] = arr[i]
-                arr[i] = min
+            if arr[j] < arr[min_index]:
+                min_index = j
             j += 1
+        arr[i], arr[min_index] = arr[min_index], arr[i]
         i += 1
-        min = arr[i]
         j = i+1
     
     return arr
-
-#def main():
-#    iterative_selection_sort([5, 0, 9, 1, 1, 2, 3, 0, 6, 3, 8])
-
-#if __name__ == "__main__":
-#    main()
