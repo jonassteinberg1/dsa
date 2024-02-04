@@ -1,8 +1,8 @@
 def iterative_selection_sort(arr: list):
     i = 0
     j = i+1
-    min_index = i
     while i < len(arr)-1:
+        min_index = i
         while j < len(arr):
             if arr[j] < arr[min_index]:
                 min_index = j
