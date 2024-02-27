@@ -12,3 +12,5 @@ def iterative_selection_sort(arr: list):
         j = i+1
     
     return arr
+
+iterative_selection_sort([5, 1, 2, 3, 0])
