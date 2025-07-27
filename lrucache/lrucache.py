@@ -1,5 +1,7 @@
 # TO DO
 # for a single breach a single eviction maintains the correct head, tail and tracker
+# head, tail and tracker are correct at first put
+# head, tail and tracker are correct at second put
 # 
 
 """
@@ -26,9 +28,9 @@ class Node:
 
 class LRUCache:
 
-    def __init__(self, capacity: int, tracker: dict = {}):
+    def __init__(self, capacity: int):
         self.capacity = capacity
-        self.tracker = tracker
+        self.tracker = {}
         self.head: Node | None = None
         self.tail: Node | None = None
 
@@ -50,6 +52,7 @@ class LRUCache:
             elif len(self.tracker.keys()) == self.capacity:
                 prev_head_key = self.head.key
                 self.head = self.head.next_node
+                self.head.prev_node = None
                 self.remove(prev_head_key)
             self.add_to_tail(Node(key, val))
         else:
@@ -60,18 +63,9 @@ class LRUCache:
 
     def remove(self, key: int) -> None:
         try:
-            node = self.tracker[key]
             del self.tracker[key]
         except KeyError as e:
             return
-        try:
-            node.prev_node.next_node = node.next_node
-        except AttributeError:
-            pass
-        try:    
-            node.next_node.prev_node = node.prev_node
-        except AttributeError:
-            pass
     
     def add_to_tail(self, node: Node) -> None:
         prev_tail = self.tail
@@ -133,22 +127,23 @@ assert lru.capacity == 2, "LRUCache capacity is not 2"
 assert 1 not in lru.tracker, "N1 remains in LRUCache"
 assert lru.tracker.get(2) is l[0], "LRUCache is disordered"
 assert lru.tracker.get(3) is l[1], "LRUCache is disordered"
-#del lru, l
+del lru,l
 
 # test double capacity breach maintains correct order
-#lru = LRUCache(2)
-#lru.put(1,1)
-#lru.put(2,2)
-#lru.put(3,3)
-#lru.put(4,4)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert lru.capacity == 2, "LRUCache capacity is not 2"
-#assert 1 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
-#del lru, l
+lru = LRUCache(2)
+print(f"lru.tracker is: {lru.tracker}")
+lru.put(1,1)
+lru.put(2,2)
+lru.put(3,3)
+lru.put(4,4)
+l = []
+for v in lru.tracker.values():
+    l.append(v)
+assert lru.capacity == 2, "LRUCache capacity is not 2"
+assert 1 not in lru.tracker, "N1 remains in LRUCache"
+assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
+assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
+del lru, l
 
 
 # ["LRUCache","put","put","get","put","get","put","get","get","get"]
