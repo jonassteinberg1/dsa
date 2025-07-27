@@ -1,6 +1,6 @@
 # TO DO
-# 1. switch LRUCache.put() try logic to if key in self.tracker
-# 2. continue to debug why double breach following single breach fails
+# for a single breach a single eviction maintains the correct head, tail and tracker
+# 
 
 """
 LRUCache lRUCache = new LRUCache(2);
@@ -43,17 +43,15 @@ class LRUCache:
 
     def put(self, key: int, val: int) -> None:
         if self.head:
-            try:
-                self.tracker[key] # key exists so we're not increasing the size of the hash
+            if key in self.tracker:
                 self.remove(key)
                 self.add_to_tail(Node(key, val))
                 return None
-            except KeyError:
-                if len(self.tracker.keys()) == self.capacity:
-                    prev_head_key = self.head.key
-                    self.head = self.head.next_node
-                    self.remove(prev_head_key)
-                self.add_to_tail(Node(key, val))
+            elif len(self.tracker.keys()) == self.capacity:
+                prev_head_key = self.head.key
+                self.head = self.head.next_node
+                self.remove(prev_head_key)
+            self.add_to_tail(Node(key, val))
         else:
             self.tracker[key] = Node(key, val)
             self.head = self.tracker[key]
