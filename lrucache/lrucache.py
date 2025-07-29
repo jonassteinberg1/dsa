@@ -1,5 +1,6 @@
 # TO DO
-# figure out how to handle dupes
+# prev and next nodes are switched or configured incorrectly
+# take it from the top
 
 """
 LRUCache lRUCache = new LRUCache(2);
@@ -71,7 +72,7 @@ class LRUCache:
         self.tail = node # so we add a new Node instance and sure we assign it to tail but otherwise in terms of doubly linked lists we'll also always need to assign prev_node because a new node is always tail
         if self.capacity == 2:
             self.head = prev_tail
-        self.tail.prev_node = prev_tail # correct up to here; make new tail's prev_node the old tail, reference switch 1
+        self.tail.prev_node = prev_tail # self.tail.prev_node points to head in certain cases; correct up to here; make new tail's prev_node the old tail, reference switch 1
         self.tail.prev_node.next_node = self.tail # make old tail's next node the new tail, reference switch 2
         self.tracker[self.tail.key] = self.tail # fails because the dict can't handle dupe keys
 
@@ -174,9 +175,9 @@ lru.put(3,3) # head and tail are correct so put is good 1,2 3
 lru.get(2) # 1, 3, 2 correct
 lru.get(3) # 1, 2, 3 correct
 lru.put(4,4) # 2, 3, 4 correct
-lru.put(3,3) # 3, 4, 3
-lru.get(4) # 3, 3, 4
-lru.put(5,5) # 3, 4, 5
+lru.put(5,5) # 3, 4, 5 correct
+lru.get(4) # 3, 5, 4 correct
+lru.put(6,6) # 
 l = []
 for v in lru.tracker.values():
     l.append(v)
