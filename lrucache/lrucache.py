@@ -1,8 +1,5 @@
 # TO DO
-# for a single breach a single eviction maintains the correct head, tail and tracker
-# head, tail and tracker are correct at first put
-# head, tail and tracker are correct at second put
-# 
+# figure out how to handle dupes
 
 """
 LRUCache lRUCache = new LRUCache(2);
@@ -47,15 +44,15 @@ class LRUCache:
 
     def put(self, key: int, val: int) -> None:
         if self.head:
-            if key in self.tracker:
+            if key in self.tracker and self.capacity == 2:
                 self.remove(key)
                 self.add_to_tail(Node(key, val))
                 return None
             elif len(self.tracker.keys()) == self.capacity: # we shift left when we're at capacity
                 prev_head_key = self.head.key # we just save this for the delete
-                self.head = self.head.next_node
-                self.head.prev_node = None
-                self.remove(prev_head_key)
+                self.head = self.head.next_node # current head's next node becomes head; preparing to shift left
+                self.head.prev_node = None # new head's prev_node None
+                self.remove(prev_head_key) # evict old head bc we're shifting left
             self.add_to_tail(Node(key, val))
         else:
             self.tracker[key] = Node(key, val)
@@ -71,12 +68,12 @@ class LRUCache:
     
     def add_to_tail(self, node: Node) -> None:
         prev_tail = self.tail # tail backup needed for reference switch
-        self.tail = node
+        self.tail = node # so we add a new Node instance and sure we assign it to tail but otherwise in terms of doubly linked lists we'll also always need to assign prev_node because a new node is always tail
         if self.capacity == 2:
             self.head = prev_tail
-        self.tail.prev_node = prev_tail # make new tail's prev_node the old tail, reference switch 1
+        self.tail.prev_node = prev_tail # correct up to here; make new tail's prev_node the old tail, reference switch 1
         self.tail.prev_node.next_node = self.tail # make old tail's next node the new tail, reference switch 2
-        self.tracker[self.tail.key] = self.tail
+        self.tracker[self.tail.key] = self.tail # fails because the dict can't handle dupe keys
 
 # test LRUCache functionality
 #lru = LRUCache(2)
@@ -150,23 +147,43 @@ class LRUCache:
 #assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
 #del lru, l
 
-# complete test of get and put
-lru = LRUCache(2)
-lru.put(1,1) # head and tail are correct
-lru.put(2,2) # head and tail are correct 
-lru.put(3,3) # head and tail are correct so put is good
-lru.get(2)
-lru.get(3)
-lru.put(4,4)
-lru.put(3,3)
-lru.get(4)
-lru.put(5,5)
+# complete test of get and put with cache size 2
+#lru = LRUCache(2)
+#lru.put(1,1) # head and tail are correct
+#lru.put(2,2) # head and tail are correct 
+#lru.put(3,3) # head and tail are correct so put is good
+#lru.get(2)
+#lru.get(3)
+#lru.put(4,4)
+#lru.put(3,3)
+#lru.get(4)
+#lru.put(5,5)
+#l = []
+#for v in lru.tracker.values():
+#    l.append(v)
+#assert 3 not in lru.tracker, "N1 remains in LRUCache"
+#assert lru.tracker.get(4) is l[0], "LRUCache is disordered"
+#assert lru.tracker.get(5) is l[1], "LRUCache is disordered"
+#del lru, l
+
+# complete test of get and put with cache size 3
+lru = LRUCache(3)
+lru.put(1,1) # head and tail are correct 1
+lru.put(2,2) # head and tail are correct 1, 2
+lru.put(3,3) # head and tail are correct so put is good 1,2 3
+lru.get(2) # 1, 3, 2 correct
+lru.get(3) # 1, 2, 3 correct
+lru.put(4,4) # 2, 3, 4 correct
+lru.put(3,3) # 3, 4, 3
+lru.get(4) # 3, 3, 4
+lru.put(5,5) # 3, 4, 5
 l = []
 for v in lru.tracker.values():
     l.append(v)
-assert 3 not in lru.tracker, "N1 remains in LRUCache"
-assert lru.tracker.get(4) is l[0], "LRUCache is disordered"
-assert lru.tracker.get(5) is l[1], "LRUCache is disordered"
+assert 2 not in lru.tracker, "N1 remains in LRUCache"
+assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
+assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
+assert lru.tracker.get(5) is l[2], "LRUCache is disordered"
 del lru, l
 
 
