@@ -33,17 +33,21 @@ class LRUCache:
         self.tail: Node | None = None
 
     def get(self, key: int) -> int:
-        try:
-            node = self.tracker[key]
-            self.remove(key)
+        node = self.tracker(key)
+        # head switch
+        if not node.prev_node:
+            node.next_node.prev_node = None # make next node's (head) prev_node None
+            self.head = node.next_node
+            
+            self.add_to_tail(node)
+        # tail switch
+        elif not node.next_node:
+            return node.val
+        # normal switch
+        else:
             node.prev_node.next_node = node.next_node
             node.next_node.prev_node = node.prev_node
-            #if self.capacity == 2:
-                #self.head = self.tail # if capacity is 2 then we need to make old tail new head or else the reference switch will be stale
             self.add_to_tail(node)
-            return node.val
-        except KeyError:
-            return -1
 
     def put(self, key: int, val: int) -> None:
         if self.head:
