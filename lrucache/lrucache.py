@@ -36,6 +36,8 @@ class LRUCache:
         try:
             node = self.tracker[key]
             self.remove(key)
+            node.prev_node.next_node = node.next_node
+            node.next_node.prev_node = node.prev_node
             #if self.capacity == 2:
                 #self.head = self.tail # if capacity is 2 then we need to make old tail new head or else the reference switch will be stale
             self.add_to_tail(node)
@@ -69,12 +71,12 @@ class LRUCache:
     
     def add_to_tail(self, node: Node) -> None:
         prev_tail = self.tail # tail backup needed for reference switch
-        self.tail = node # so we add a new Node instance and sure we assign it to tail but otherwise in terms of doubly linked lists we'll also always need to assign prev_node because a new node is always tail
+        self.tail = node
         if self.capacity == 2:
             self.head = prev_tail
-        self.tail.prev_node = prev_tail # self.tail.prev_node points to head in certain cases; correct up to here; make new tail's prev_node the old tail, reference switch 1
-        self.tail.prev_node.next_node = self.tail # make old tail's next node the new tail, reference switch 2
-        self.tracker[self.tail.key] = self.tail # fails because the dict can't handle dupe keys
+        self.tail.prev_node = prev_tail
+        self.tail.prev_node.next_node = self.tail
+        self.tracker[self.tail.key] = self.tail
 
 # test LRUCache functionality
 #lru = LRUCache(2)
@@ -169,15 +171,15 @@ class LRUCache:
 
 # complete test of get and put with cache size 3
 lru = LRUCache(3)
-lru.put(1,1) # head and tail are correct 1
-lru.put(2,2) # head and tail are correct 1, 2
-lru.put(3,3) # head and tail are correct so put is good 1,2 3
-lru.get(2) # 1, 3, 2 correct
-lru.get(3) # 1, 2, 3 correct
-lru.put(4,4) # 2, 3, 4 correct
-lru.put(5,5) # 3, 4, 5 correct
-lru.get(4) # 3, 5, 4 correct
-lru.put(6,6) # 
+lru.put(1,1) 
+lru.put(2,2) 
+lru.put(3,3) # everything is correct to here
+lru.get(3) 
+lru.get(2) 
+lru.put(4,4) 
+lru.put(5,5) 
+lru.get(4) 
+lru.put(6,6)
 l = []
 for v in lru.tracker.values():
     l.append(v)
