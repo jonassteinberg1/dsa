@@ -32,12 +32,12 @@ class LRUCache:
         self.tail: Node | None = None
 
     def get(self, key: int) -> int:
-        node = self.tracker(key)
+        node = self.tracker.get(key)
         # head switch
         if not node.prev_node:
             node.next_node.prev_node = None # make next node's (head) prev_node None
             self.head = node.next_node
-            self.remove(node)
+            self.remove(key)
             self.add_to_tail(node)
         # tail switch
         elif not node.next_node:
@@ -46,7 +46,7 @@ class LRUCache:
         else:
             node.prev_node.next_node = node.next_node
             node.next_node.prev_node = node.prev_node
-            self.remove(node)
+            self.remove(key)
             self.add_to_tail(node)
 
     def put(self, key: int, val: int) -> None:
@@ -68,7 +68,7 @@ class LRUCache:
         return None
 
     def remove(self, key: int) -> None:
-        try:
+        try: # because they could try a get for a key not present
             del self.tracker[key]
         except KeyError as e:
             return
@@ -177,22 +177,22 @@ class LRUCache:
 
 # complete test of get and put with cache size 3
 lru = LRUCache(3)
-lru.put(1,1) 
+lru.put(1,1)
 lru.put(2,2) 
-lru.put(3,3) # everything is correct to here
-lru.get(3) 
-lru.get(2) 
-lru.put(4,4) 
-lru.put(5,5) 
-lru.get(4) 
-lru.put(6,6)
+lru.put(3,3) # everything is correct to here; 123
+lru.get(3) # 123
+lru.get(2) # 132
+lru.put(4,4) # 324
+lru.put(5,5) # 245
+lru.get(4) # everything is correct to here; 254
+lru.put(6,6) # 546
 l = []
 for v in lru.tracker.values():
     l.append(v)
 assert 2 not in lru.tracker, "N1 remains in LRUCache"
-assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
+assert lru.tracker.get(5) is l[0], "LRUCache is disordered"
 assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
-assert lru.tracker.get(5) is l[2], "LRUCache is disordered"
+assert lru.tracker.get(6) is l[2], "LRUCache is disordered"
 del lru, l
 
 
