@@ -49,6 +49,8 @@ class LRUCache:
                 node.next_node.prev_node = node.prev_node
                 self.remove(key)
                 self.add_to_tail(node)
+        else:
+            return -1
 
     def put(self, key: int, val: int) -> None:
         if self.head:
