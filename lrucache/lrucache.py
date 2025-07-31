@@ -40,6 +40,7 @@ class LRUCache:
                 self.head = node.next_node
                 self.remove(key)
                 self.add_to_tail(node)
+                return node.val
             # tail switch
             elif not node.next_node:
                 return node.val
@@ -49,6 +50,7 @@ class LRUCache:
                 node.next_node.prev_node = node.prev_node
                 self.remove(key)
                 self.add_to_tail(node)
+                return node.val
         else:
             return -1
 
