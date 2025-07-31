@@ -1,6 +1,5 @@
 # TO DO
-# prev and next nodes are switched or configured incorrectly
-# take it from the top
+# find a algorithmic way to do if capacity == 2 in add_to_tail()
 
 """
 LRUCache lRUCache = new LRUCache(2);
@@ -38,7 +37,7 @@ class LRUCache:
         if not node.prev_node:
             node.next_node.prev_node = None # make next node's (head) prev_node None
             self.head = node.next_node
-            
+            self.remove(node)
             self.add_to_tail(node)
         # tail switch
         elif not node.next_node:
@@ -47,6 +46,7 @@ class LRUCache:
         else:
             node.prev_node.next_node = node.next_node
             node.next_node.prev_node = node.prev_node
+            self.remove(node)
             self.add_to_tail(node)
 
     def put(self, key: int, val: int) -> None:
@@ -75,9 +75,11 @@ class LRUCache:
     
     def add_to_tail(self, node: Node) -> None:
         prev_tail = self.tail # tail backup needed for reference switch
+        node.next_node = None
+        node.prev_node = prev_tail
         self.tail = node
-        if self.capacity == 2:
-            self.head = prev_tail
+        #if self.capacity == 2:
+        #    self.head = prev_tail
         self.tail.prev_node = prev_tail
         self.tail.prev_node.next_node = self.tail
         self.tracker[self.tail.key] = self.tail
