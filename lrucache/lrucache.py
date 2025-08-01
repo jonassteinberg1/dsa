@@ -35,7 +35,11 @@ class LRUCache:
         node = self.tracker.get(key)
         # head switch
         if node:
-            if not node.prev_node:
+            # size of 1 "switch"
+            if not node.prev_node and not node.next_node:
+                return node.val
+            # head switch
+            elif not node.prev_node:
                 node.next_node.prev_node = None # make next node's (head) prev_node None
                 self.head = node.next_node
                 self.remove(key)
@@ -62,10 +66,19 @@ class LRUCache:
                 return None
             elif len(self.tracker.keys()) == self.capacity: # we shift left when we're at capacity
                 prev_head_key = self.head.key # we just save this for the delete
-                self.head = self.head.next_node # current head's next node becomes head; preparing to shift left
-                self.head.prev_node = None # new head's prev_node None
-                self.remove(prev_head_key) # evict old head bc we're shifting left
-            self.add_to_tail(Node(key, val))
+                node = self.tracker.get(prev_head_key)
+                if not node.prev_node and not node.next_node:
+                    self.remove(prev_head_key)
+                    self.tracker[key] = Node(key, val)
+                    self.head = self.tracker[key]
+                    self.tail = self.tracker[key]
+                else:
+                    self.head = self.head.next_node # current head's next node becomes head; preparing to shift left
+                    self.head.prev_node = None # new head's prev_node None
+                    self.remove(prev_head_key) # evict old head bc we're shifting left
+                    self.add_to_tail(Node(key, val))
+            else:
+                self.add_to_tail(Node(key, val))
         else:
             self.tracker[key] = Node(key, val)
             self.head = self.tracker[key]
@@ -200,9 +213,37 @@ class LRUCache:
 #assert lru.tracker.get(6) is l[2], "LRUCache is disordered"
 #del lru, l
 
+# [[1],[2,1],[2],[3,2],[2],[3]]
+#lru = LRUCache(1)
+#lru.put(2,1)
+#lru.get(2)
+#lru.put(3,2)
+#lru.get(2)
+#lru.get(3)
+#l = []
+#for v in lru.tracker.values():
+#    l.append(v)
+#assert lru.capacity == 1, "LRUCache capacity is not 2"
+#assert 1 not in lru.tracker, "N1 remains in LRUCache"
+#assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
+#del lru,l
+
 
 # ["LRUCache","put","put","get","put","get","put","get","get","get"]
 # [[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]
 
 # expected
 # [null,null,null,1,null,-1,null,-1,3,4]
+
+def run(arr: list):
+    l = []
+    lru = LRUCache(arr[0][0])
+    for el in arr[1:]:
+        if len(el) == 1:
+            l.append([lru.get(el[0])])
+        else:
+            l.append([lru.put(el[0], el[1])])
+    m = ['null' for None in l]
+    return m
+
+run([[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]])
