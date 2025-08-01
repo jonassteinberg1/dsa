@@ -238,12 +238,13 @@ class LRUCache:
 def run(arr: list):
     l = []
     lru = LRUCache(arr[0][0])
+    l.append(['null'])
     for el in arr[1:]:
         if len(el) == 1:
             l.append([lru.get(el[0])])
         else:
             l.append([lru.put(el[0], el[1])])
-    m = ['null' for None in l]
+    m = ['null' for el in l if el is None]
     return m
 
 run([[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]])
