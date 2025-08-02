@@ -37,33 +37,33 @@ class LRUCache:
         if node:
             # size of 1 "switch"
             if not node.prev_node and not node.next_node:
-                return node.val
+                return [node.val]
             # head switch
             elif not node.prev_node:
                 node.next_node.prev_node = None # make next node's (head) prev_node None
                 self.head = node.next_node
                 self.remove(key)
                 self.add_to_tail(node)
-                return node.val
+                return [node.val]
             # tail switch
             elif not node.next_node:
-                return node.val
+                return [node.val]
             # normal switch
             else:
                 node.prev_node.next_node = node.next_node
                 node.next_node.prev_node = node.prev_node
                 self.remove(key)
                 self.add_to_tail(node)
-                return node.val
+                return [node.val]
         else:
-            return -1
+            return [-1]
 
     def put(self, key: int, val: int) -> None:
         if self.head:
             if key in self.tracker and self.capacity == 2:
                 self.remove(key)
                 self.add_to_tail(Node(key, val))
-                return None
+                return ['null']
             elif len(self.tracker.keys()) == self.capacity: # we shift left when we're at capacity
                 prev_head_key = self.head.key # we just save this for the delete
                 node = self.tracker.get(prev_head_key)
@@ -83,7 +83,7 @@ class LRUCache:
             self.tracker[key] = Node(key, val)
             self.head = self.tracker[key]
             self.tail = self.tracker[key]
-        return None
+        return ['null']
 
     def remove(self, key: int) -> None:
         try: # because they could try a get for a key not present
@@ -96,8 +96,9 @@ class LRUCache:
         node.next_node = None
         node.prev_node = prev_tail
         self.tail = node
-        #if self.capacity == 2:
-        #    self.head = prev_tail
+        if self.capacity == 2:
+            self.head = prev_tail
+            self.head.prev_node = None
         self.tail.prev_node = prev_tail
         self.tail.prev_node.next_node = self.tail
         self.tracker[self.tail.key] = self.tail
@@ -241,10 +242,24 @@ def run(arr: list):
     l.append(['null'])
     for el in arr[1:]:
         if len(el) == 1:
-            l.append([lru.get(el[0])])
+            l.append(lru.get(el[0]))
         else:
-            l.append([lru.put(el[0], el[1])])
-    m = ['null' for el in l if el is None]
-    return m
+            l.append(lru.put(el[0], el[1]))
+    return l
 
-run([[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]])
+run([[10],[10,13],[3,17],[6,11],[10,5],[9,10],
+      [13],[2,19],[2],[3],[5,25],[8],[9,22],
+      [5,5],[1,30],[11],[9,12],[7],[5],[8],[9],
+      [4,30],[9,3],[9],[10],[10],[6,14],[3,1],
+      [3],[10,11],[8],[2,14],[1],[5],[4],[11,4],
+      [12,24],[5,18],[13],[7,23],[8],[12],[3,27],
+      [2,12],[5],[2,9],[13,4],[8,18],[1,7],[6],
+      [9,29],[8,21],[5],[6,30],[1,12],[10],[4,15],
+      [7,22],[11,26],[8,17],[9,29],[5],[3,4],[11,30],
+      [12],[4,29],[3],[9],[6],[3,4],[1],[10],[3,29],
+      [10,28],[1,20],[11,13],[3],[3,12],[3,8],[10,9],
+      [3,26],[8],[7],[5],[13,17],[2,27],[11,15],
+      [12],[9,19],[2,15],[3,16],[1],[12,17],[9,1],
+      [6,19],[4],[5],[5],[8,1],[11,7],[5,2],[9,28],
+      [1],[2,2],[7,4],[4,22],[7,24],[9,26],[13,28],
+      [11,26]])
