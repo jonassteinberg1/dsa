@@ -1,18 +1,5 @@
 # TO DO
-# find a algorithmic way to do if capacity == 2 in add_to_tail()
-
-"""
-LRUCache lRUCache = new LRUCache(2);
-lRUCache.put(1, 1); // cache is {1=1}
-lRUCache.put(2, 2); // cache is {1=1, 2=2}
-lRUCache.get(1);    // return 1
-lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
-lRUCache.get(2);    // returns -1 (not found)
-lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
-lRUCache.get(1);    // return -1 (not found)
-lRUCache.get(3);    // return 3
-lRUCache.get(4);    // return 4
-"""
+# take it from the top of put() and notes
 
 from typing import Any
 
@@ -37,6 +24,7 @@ class LRUCache:
         if node:
             # size of 1 "switch"
             if not node.prev_node and not node.next_node:
+                self.check(self.tracker, self.head, self.tail)
                 return [node.val]
             # head switch
             elif not node.prev_node:
@@ -44,11 +32,11 @@ class LRUCache:
                 self.head = node.next_node
                 self.remove(key)
                 self.add_to_tail(node)
-                check(self.tracker, self.head, self.tail)
+                self.check(self.tracker, self.head, self.tail)
                 return [node.val]
             # tail switch
             elif not node.next_node:
-                check(self.tracker, self.head, self.tail)
+                self.check(self.tracker, self.head, self.tail)
                 return [node.val]
             # normal switch
             else:
@@ -56,22 +44,48 @@ class LRUCache:
                 node.next_node.prev_node = node.prev_node
                 self.remove(key)
                 self.add_to_tail(node)
-                check(self.tracker, self.head, self.tail)
+                self.check(self.tracker, self.head, self.tail)
                 return [node.val]
         else:
-            check(self.tracker, self.head, self.tail)
+            self.check(self.tracker, self.head, self.tail)
             return [-1]
 
     def put(self, key: int, val: int) -> None:
+        # check the len 0 case
         if self.head:
-            #if key in self.tracker and self.capacity == 2:
-            if key in self.tracker:
-                if key == self.head.key:
-                    node = self.tracker[key]
-                    node.next_node.prev_node = None # make next node's (head) prev_node None
-                    self.head = node.next_node
+            # begin checking the cases where len more than 0
+            # we start with len 1 and at capacity
+            if len(self.tracker.keys()) == 1 and self.capacity == 1:
+                self.remove(key)
+                self.tracker[key] = Node(key, val)
+                self.head = self.tracker[key]
+                self.tail = self.tracker[key]
+            elif len(self.tracker.keys()) == 1:
+                self.add(Node(key, int))
+                self.head = self.tail.prev_node
+            if key in self.tracker and len(self.tracker.keys()) == 1:
                 self.remove(key)
                 self.add_to_tail(Node(key, val))
+            elif key in self.tracker:
+                node = self.tracker[key]
+                if key == self.head.key:
+                    node.next_node.prev_node = None # make next node's (head) prev_node None
+                    self.head = node.next_node
+                    self.remove(key)
+                    self.add_to_tail(Node(key, val))
+                elif key == self.tail.key:
+                    self.remove(key)
+                    self.tail = Node(key, val)
+                    node.prev_node.next_node = self.tail
+                    self.tail.prev_node = node.prev_node
+                    self.tail.next_node = None
+                    self.tracker[self.tail.key] = self.tail  
+                else:
+                    node.prev_node.next_node = node.next_node
+                    node.next_node.prev_node = node.prev_node
+                    self.remove(key)
+                    self.add_to_tail(Node(key, val))
+                self.check(self.tracker, self.head, self.tail)
                 return ['null']
             elif len(self.tracker.keys()) == self.capacity: # we shift left when we're at capacity
                 prev_head_key = self.head.key # we just save this for the delete
@@ -86,13 +100,14 @@ class LRUCache:
                     self.head.prev_node = None # new head's prev_node None
                     self.remove(prev_head_key) # evict old head bc we're shifting left
                     self.add_to_tail(Node(key, val))
+                    self.check(self.tracker, self.head, self.tail)
             else:
                 self.add_to_tail(Node(key, val))
         else:
             self.tracker[key] = Node(key, val)
             self.head = self.tracker[key]
             self.tail = self.tracker[key]
-        check(self.tracker, self.head, self.tail)
+        self.check(self.tracker, self.head, self.tail)
         return ['null']
 
     def remove(self, key: int) -> None:
@@ -101,172 +116,36 @@ class LRUCache:
         except KeyError as e:
             return
     
-    def add_to_tail(self, node: Node) -> None:
-        prev_tail = self.tail # tail backup needed for reference switch
-        node.next_node = None
-        node.prev_node = prev_tail
+    def add(self, node: Node) -> None:
+        prev_tail = self.tail
         self.tail = node
-        if self.capacity == 2:
-            self.head = prev_tail
-            self.head.prev_node = None
+        prev_tail.next_node = node
         self.tail.prev_node = prev_tail
-        self.tail.prev_node.next_node = self.tail
-        self.tracker[self.tail.key] = self.tail
+        self.tracker[node.key] = node        
+
 
     def check(self, d: dict, h: Node, t: Node):
         self.d = d
         self.h = h
         self.t = t
-        for idx, val in enumerate(self.d.keys()):
-            if len(self.d.keys()) == 1:
+        k = list(self.d.keys())
+        v = list(self.d.values())
+        for idx, val in enumerate(k):
+            if len(k) == 1:
                 assert self.h is self.t
-                assert d[idx] is self.h
-                assert d[idx] is self.t
-                assert d[idx].prev_node is None
-                assert d[idx].next_node is None
-            elif d[idx] is self.h:
-                assert d[idx].prev_node is None
-                assert d[idx].next_node is d[idx+1]
-            elif d[idx] is self.t:
-                assert d[idx].prev_node is d[idx-1]
-                assert d[idx].next_node is None
+                assert v[idx] is self.h
+                assert v[idx] is self.t
+                assert v[idx].prev_node is None
+                assert v[idx].next_node is None
+            elif v[idx] is self.h:
+                assert v[idx].prev_node is None
+                assert v[idx].next_node is v[idx+1]
+            elif v[idx] is self.t:
+                assert v[idx].prev_node is v[idx-1]
+                assert v[idx].next_node is None
             else:
-                assert d[idx].next_node is d[idx+1]
-                assert d[idx].prev_node is d[idx-1]
-
-
-# test LRUCache functionality
-#lru = LRUCache(2)
-#print(lru.head)
-#print(lru.tail)
-#print(lru.tracker)
-#print(lru.capacity)
-#del lru
-
-# test single LRUCache.put functionality
-#lru = LRUCache(2)
-#lru.put(1,1)
-#assert lru.tracker
-#assert lru.tracker[1] is lru.head, "head is incorrect"
-#assert lru.tracker[1] is lru.tail, "tail is incorrect"
-#del lru
-
-
-# test double LRUCache.put functionality
-#lru = LRUCache(2)
-#lru.put(1,1)
-#lru.put(2,2)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert lru.tracker.get(1) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(2) is l[1], "LRUCache is disordered"
-#del lru, l
-
-# test capacity breach maintains correct order
-#lru = LRUCache(2)
-#lru.put(1,1)
-#lru.put(2,2)
-#lru.put(3,3)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert lru.capacity == 2, "LRUCache capacity is not 2"
-#assert 1 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(2) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(3) is l[1], "LRUCache is disordered"
-#del lru,l
-
-# test double capacity breach maintains correct order
-#lru = LRUCache(2)
-#lru.put(1,1)
-#lru.put(2,2)
-#lru.put(3,3)
-#lru.put(4,4)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert lru.capacity == 2, "LRUCache capacity is not 2"
-#assert 1 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
-#del lru, l
-
-# test capacity breach after get maintains correct order
-#lru = LRUCache(2)
-#lru.put(1,1) # head and tail are correct
-#lru.put(2,2) # head and tail are correct 
-#lru.put(3,3) # head and tail are correct so put is good
-#lru.get(2)
-#lru.put(4,4)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert 3 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(2) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
-#del lru, l
-
-# complete test of get and put with cache size 2
-#lru = LRUCache(2)
-#lru.put(1,1) # head and tail are correct
-#lru.put(2,2) # head and tail are correct 
-#lru.put(3,3) # head and tail are correct so put is good
-#lru.get(2)
-#lru.get(3)
-#lru.put(4,4)
-#lru.put(3,3)
-#lru.get(4)
-#lru.put(5,5)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert 3 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(4) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(5) is l[1], "LRUCache is disordered"
-#del lru, l
-
-# complete test of get and put with cache size 3
-#lru = LRUCache(3)
-#lru.put(1,1)
-#lru.put(2,2) 
-#lru.put(3,3) # everything is correct to here; 123
-#lru.get(3) # 123
-#lru.get(2) # 132
-#lru.put(4,4) # 324
-#lru.put(5,5) # 245
-#lru.get(4) # everything is correct to here; 254
-#lru.put(6,6) # 546
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert 2 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(5) is l[0], "LRUCache is disordered"
-#assert lru.tracker.get(4) is l[1], "LRUCache is disordered"
-#assert lru.tracker.get(6) is l[2], "LRUCache is disordered"
-#del lru, l
-
-# [[1],[2,1],[2],[3,2],[2],[3]]
-#lru = LRUCache(1)
-#lru.put(2,1)
-#lru.get(2)
-#lru.put(3,2)
-#lru.get(2)
-#lru.get(3)
-#l = []
-#for v in lru.tracker.values():
-#    l.append(v)
-#assert lru.capacity == 1, "LRUCache capacity is not 2"
-#assert 1 not in lru.tracker, "N1 remains in LRUCache"
-#assert lru.tracker.get(3) is l[0], "LRUCache is disordered"
-#del lru,l
-
-
-# ["LRUCache","put","put","get","put","get","put","get","get","get"]
-# [[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]
-
-# expected
-# [null,null,null,1,null,-1,null,-1,3,4]
+                assert v[idx].next_node is v[idx+1]
+                assert v[idx].prev_node is v[idx-1]
 
 def run(arr: list):
     l = []
@@ -279,4 +158,4 @@ def run(arr: list):
             l.append(lru.put(el[0], el[1]))
     return l
 
-run([[10],[10,13],[3,17],[6,11],[10,5],[9,10],[13],[2,19],[2],[3],[5,25],[8],[9,22],[5,5],[1,30],[11],[9,12],[7],[5],[8],[9],[4,30],[9,3],[9],[10],[10],[6,14],[3,1],[3],[10,11],[8],[2,14],[1],[5],[4],[11,4],[12,24],[5,18],[13],[7,23],[8],[12],[3,27],[2,12],[5],[2,9],[13,4],[8,18],[1,7],[6],[9,29],[8,21],[5],[6,30],[1,12],[10],[4,15],[7,22],[11,26],[8,17],[9,29],[5],[3,4],[11,30],[12],[4,29],[3],[9],[6],[3,4],[1],[10],[3,29],[10,28],[1,20],[11,13],[3],[3,12],[3,8],[10,9],[3,26],[8],[7],[5],[13,17],[2,27],[11,15],[12],[9,19],[2,15],[3,16],[1],[12,17],[9,1],[6,19],[4],[5],[5],[8,1],[11,7],[5,2],[9,28],[1],[2,2],[7,4],[4,22],[7,24],[9,26],[13,28],[11,26]])
+run([[2],[2,1],[2,2],[2],[1,1],[4,1],[2]])
