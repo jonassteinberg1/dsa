@@ -31,7 +31,7 @@ class LRUCache:
                 node.next_node.prev_node = None # make next node's (head) prev_node None
                 self.head = node.next_node
                 self.remove(key)
-                self.add_to_tail(node)
+                self.add(node)
                 self.check(self.tracker, self.head, self.tail)
                 return [node.val]
             # tail switch
@@ -43,7 +43,7 @@ class LRUCache:
                 node.prev_node.next_node = node.next_node
                 node.next_node.prev_node = node.prev_node
                 self.remove(key)
-                self.add_to_tail(node)
+                self.add(node)
                 self.check(self.tracker, self.head, self.tail)
                 return [node.val]
         else:
@@ -55,55 +55,64 @@ class LRUCache:
         if self.head:
             # begin checking the cases where len more than 0
             # we start with len 1 and at capacity
-            if len(self.tracker.keys()) == 1 and self.capacity == 1:
-                self.remove(key)
+            #if len(self.tracker.keys()) == 1 and key in self.tracker:
+            if len(self.tracker.keys()) == 1 and (self.capacity == 1 or key in self.tracker):
+                self.remove(self.head.key)
                 self.tracker[key] = Node(key, val)
                 self.head = self.tracker[key]
                 self.tail = self.tracker[key]
+            # len 1 and not at capacity
             elif len(self.tracker.keys()) == 1:
-                self.add(Node(key, int))
+                self.add(Node(key, val))
                 self.head = self.tail.prev_node
-            if key in self.tracker and len(self.tracker.keys()) == 1:
+                self.head.prev_node = None
+            # len 2 and matching head
+            # note: match implies capacity is not met because
+            # the match has to be removed
+            elif len(self.tracker.keys()) >= 2 and self.head.key == key:
                 self.remove(key)
-                self.add_to_tail(Node(key, val))
-            elif key in self.tracker:
+                self.add(Node(key, val))
+                self.head = self.head.next_node
+                self.head.prev_node = None
+            # len 2 and matching tail
+            elif len(self.tracker.keys()) == 2 and self.tail.key == key:
+                self.remove(key)
+                node = Node(key, val)
+                self.tail = node
+                self.head.next_node = node
+                self.tail.prev_node = self.head
+                self.tracker[key] = node
+            elif len(self.tracker.keys()) == 2 and self.capacity == 2:
+                self.remove(self.head.key)
+                self.add(Node(key, val))
+                self.head = self.tail.prev_node
+                self.head.prev_node = None
+            elif len(self.tracker.keys()) > 2 and self.tail.key == key:
+                self.remove(key)
+                node = Node(key, val)
+                prev_tail = self.tail
+                self.tail = node
+                node.prev_node = prev_tail.prev_node
+                prev_tail.prev_node.next_node = node
+                self.tracker[key] = node
+            # len 2 or more matching but not head nor tail
+            elif len(self.tracker.keys()) >= 2 and key in self.tracker:
                 node = self.tracker[key]
-                if key == self.head.key:
-                    node.next_node.prev_node = None # make next node's (head) prev_node None
-                    self.head = node.next_node
-                    self.remove(key)
-                    self.add_to_tail(Node(key, val))
-                elif key == self.tail.key:
-                    self.remove(key)
-                    self.tail = Node(key, val)
-                    node.prev_node.next_node = self.tail
-                    self.tail.prev_node = node.prev_node
-                    self.tail.next_node = None
-                    self.tracker[self.tail.key] = self.tail  
-                else:
-                    node.prev_node.next_node = node.next_node
-                    node.next_node.prev_node = node.prev_node
-                    self.remove(key)
-                    self.add_to_tail(Node(key, val))
-                self.check(self.tracker, self.head, self.tail)
-                return ['null']
-            elif len(self.tracker.keys()) == self.capacity: # we shift left when we're at capacity
-                prev_head_key = self.head.key # we just save this for the delete
-                node = self.tracker.get(prev_head_key)
-                if not node.prev_node and not node.next_node:
-                    self.remove(prev_head_key)
-                    self.tracker[key] = Node(key, val)
-                    self.head = self.tracker[key]
-                    self.tail = self.tracker[key]
-                else:
-                    self.head = self.head.next_node # current head's next node becomes head; preparing to shift left
-                    self.head.prev_node = None # new head's prev_node None
-                    self.remove(prev_head_key) # evict old head bc we're shifting left
-                    self.add_to_tail(Node(key, val))
-                    self.check(self.tracker, self.head, self.tail)
+                node.prev_node.next_node = node.next_node
+                node.next_node.prev_node = node.prev_node
+                self.remove(key) # [11] at least
+                self.add(Node(key, val))
+            # implicitly by the cases above len 2 or more and at capacity
+            elif len(self.tracker.keys()) == self.capacity:
+                self.remove(self.head.key)
+                self.add(Node(key, val))
+                self.head = self.head.next_node
+                self.head.prev_node = None
+            # len 2 or more not at capacity no match
             else:
-                self.add_to_tail(Node(key, val))
+                self.add(Node(key, val))
         else:
+            # len 0
             self.tracker[key] = Node(key, val)
             self.head = self.tracker[key]
             self.tail = self.tracker[key]
@@ -121,6 +130,7 @@ class LRUCache:
         self.tail = node
         prev_tail.next_node = node
         self.tail.prev_node = prev_tail
+        self.tail.next_node = None
         self.tracker[node.key] = node        
 
 
@@ -147,6 +157,7 @@ class LRUCache:
                 assert v[idx].next_node is v[idx+1]
                 assert v[idx].prev_node is v[idx-1]
 
+# at least to dupe [6]
 def run(arr: list):
     l = []
     lru = LRUCache(arr[0][0])
@@ -158,4 +169,4 @@ def run(arr: list):
             l.append(lru.put(el[0], el[1]))
     return l
 
-run([[2],[2,1],[2,2],[2],[1,1],[4,1],[2]])
+run([[1],[2,1],[2],[3,2],[2],[3]])
