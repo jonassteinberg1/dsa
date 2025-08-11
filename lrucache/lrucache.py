@@ -1,137 +1,50 @@
-# TO DO
-# take it from the top of put() and notes
-
-from typing import Any
-
 class Node:
-    def __init__(self, key: int, val: int):
-        self.key = key
-        self.val = val
-        self.next_node: Node | None = None
-        self.prev_node: Node | None = None
+    def __init__(self, k, v):
+        self.key = k
+        self.val = v
+        self.prev = None
+        self.next = None
 
 class LRUCache:
-
-    def __init__(self, capacity: int):
+    def __init__(self, capacity):
         self.capacity = capacity
-        self.tracker = {}
-        self.head: Node | None = None
-        self.tail: Node | None = None
+        self.dic = dict()
+        self.head = Node(0, 0)
+        self.tail = Node(0, 0)
+        self.head.next = self.tail
+        self.tail.prev = self.head
 
-    def get(self, key: int) -> int:
-        node = self.tracker.get(key)
-        # head switch
-        if node:
-            # size of 1 "switch"
-            if not node.prev_node and not node.next_node:
-                self.check(self.tracker, self.head, self.tail)
-                return [node.val]
-            # head switch
-            elif not node.prev_node:
-                node.next_node.prev_node = None # make next node's (head) prev_node None
-                self.head = node.next_node
-                self.remove(key)
-                self.add(node)
-                self.check(self.tracker, self.head, self.tail)
-                return [node.val]
-            # tail switch
-            elif not node.next_node:
-                self.check(self.tracker, self.head, self.tail)
-                return [node.val]
-            # normal switch
-            else:
-                node.prev_node.next_node = node.next_node
-                node.next_node.prev_node = node.prev_node
-                self.remove(key)
-                self.add(node)
-                self.check(self.tracker, self.head, self.tail)
-                return [node.val]
-        else:
-            self.check(self.tracker, self.head, self.tail)
-            return [-1]
+    def get(self, key):
+        if key in self.dic:
+            n = self.dic[key]
+            self.remove(n)
+            self.add(n)
+            return n.val
+        return -1
 
-    def put(self, key: int, val: int) -> None:
-        # check the len 0 case
-        if self.head:
-            # begin checking the cases where len more than 0
-            # we start with len 1 and at capacity
-            #if len(self.tracker.keys()) == 1 and key in self.tracker:
-            if len(self.tracker.keys()) == 1 and (self.capacity == 1 or key in self.tracker):
-                self.remove(self.head.key)
-                self.tracker[key] = Node(key, val)
-                self.head = self.tracker[key]
-                self.tail = self.tracker[key]
-            # len 1 and not at capacity
-            elif len(self.tracker.keys()) == 1:
-                self.add(Node(key, val))
-                self.head = self.tail.prev_node
-                self.head.prev_node = None
-            # len 2 and matching head
-            # note: match implies capacity is not met because
-            # the match has to be removed
-            elif len(self.tracker.keys()) >= 2 and self.head.key == key:
-                self.remove(key)
-                self.add(Node(key, val))
-                self.head = self.head.next_node
-                self.head.prev_node = None
-            # len 2 and matching tail
-            elif len(self.tracker.keys()) == 2 and self.tail.key == key:
-                self.remove(key)
-                node = Node(key, val)
-                self.tail = node
-                self.head.next_node = node
-                self.tail.prev_node = self.head
-                self.tracker[key] = node
-            elif len(self.tracker.keys()) == 2 and self.capacity == 2:
-                self.remove(self.head.key)
-                self.add(Node(key, val))
-                self.head = self.tail.prev_node
-                self.head.prev_node = None
-            elif len(self.tracker.keys()) > 2 and self.tail.key == key:
-                self.remove(key)
-                node = Node(key, val)
-                prev_tail = self.tail
-                self.tail = node
-                node.prev_node = prev_tail.prev_node
-                prev_tail.prev_node.next_node = node
-                self.tracker[key] = node
-            # len 2 or more matching but not head nor tail
-            elif len(self.tracker.keys()) >= 2 and key in self.tracker:
-                node = self.tracker[key]
-                node.prev_node.next_node = node.next_node
-                node.next_node.prev_node = node.prev_node
-                self.remove(key) # [11] at least
-                self.add(Node(key, val))
-            # implicitly by the cases above len 2 or more and at capacity
-            elif len(self.tracker.keys()) == self.capacity:
-                self.remove(self.head.key)
-                self.add(Node(key, val))
-                self.head = self.head.next_node
-                self.head.prev_node = None
-            # len 2 or more not at capacity no match
-            else:
-                self.add(Node(key, val))
-        else:
-            # len 0
-            self.tracker[key] = Node(key, val)
-            self.head = self.tracker[key]
-            self.tail = self.tracker[key]
-        self.check(self.tracker, self.head, self.tail)
-        return ['null']
+    def put(self, key, value):
+        if key in self.dic:
+            self.remove(self.dic[key])
+        n = Node(key, value)
+        self.add(n)
+        self.dic[key] = n
+        if len(self.dic) > self.capacity:
+            n = self.head.next
+            self.remove(n)
+            del self.dic[n.key]
 
-    def remove(self, key: int) -> None:
-        try: # because they could try a get for a key not present
-            del self.tracker[key]
-        except KeyError as e:
-            return
-    
-    def add(self, node: Node) -> None:
-        prev_tail = self.tail
-        self.tail = node
-        prev_tail.next_node = node
-        self.tail.prev_node = prev_tail
-        self.tail.next_node = None
-        self.tracker[node.key] = node        
+    def remove(self, node):
+        p = node.prev
+        n = node.next
+        p.next = n
+        n.prev = p
+
+    def add(self, node):
+        p = self.tail.prev
+        p.next = node
+        self.tail.prev = node
+        node.prev = p
+        node.next = self.tail     
 
 
     def check(self, d: dict, h: Node, t: Node):
