@@ -1,39 +1,42 @@
 class Node:
-    def __init__(self, key: str):
+    def __init__(self, key):
         self.key = key
-        self.next = None
-        self.prev = None
+        self.prev, self.next = None
 
 class AllOne:
-
     def __init__(self):
         self.strings = {}
-        self.head = Node('string1')
-        self.tail = Node('string2')
-        self.head.next = self.tail
+        self.head = Node('string') # initialize doubly linked list
+        self.tail = Node('string')
+        self.head.next = self.tail # initialize head and tail
         self.tail.prev = self.head
 
     def inc(self, key: str) -> None:
-        if key in self.strings:
-            self.strings[key] += 1
-        else:
+        if key not in self.strings:
             node = Node(key)
-            
-            self.strings[key] = 1
+            self.strings[key] = [1, node]
+        else:
+            self.strings[key][0] += 1
+            if self.strings[key][0]
 
     def dec(self, key: str) -> None:
-        count = self.strings[key]
-        if (count - 1) == 0:
+        if self.strings[key][0] == 1:
+            node = self.strings[key][1]
+            self.remove(node)
             del self.strings[key]
         else:
-            self.strings[key] -= 1          
+            self.strings[key][0] -= 1
 
     def getMaxKey(self) -> str:
-        
+        if key not in self.strings:
+            return ""
+        return self.tail
 
     def getMinKey(self) -> str:
+        if key not in self.strings:
+            return ""
+        return self.head
         
-
-
-# ["AllOne","inc","inc","getMaxKey","getMinKey","inc","getMaxKey","getMinKey"]
-# [[],["hello"],["hello"],[],[],["leet"],[],[]]
+    def remove(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
