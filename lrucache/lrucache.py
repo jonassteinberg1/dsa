@@ -1,50 +1,50 @@
 class Node:
-    def __init__(self, k, v):
-        self.key = k
-        self.val = v
+    def __init__(self, key, val):
+        self.key = key
+        self.val = val
         self.prev = None
         self.next = None
 
 class LRUCache:
     def __init__(self, capacity):
         self.capacity = capacity
-        self.dic = dict()
+        self.tracker = {}
         self.head = Node(0, 0)
         self.tail = Node(0, 0)
         self.head.next = self.tail
         self.tail.prev = self.head
 
     def get(self, key):
-        if key in self.dic:
-            n = self.dic[key]
-            self.remove(n)
-            self.add(n)
-            return n.val
-        return -1
+        if key not in self.tracker:
+            return -1
+        self.remove(key)
+        node = self.tracker[key]
+        self.add_to_tail(node)
+        return node.val
+    
+    def put(self, key, val):
+        if key in self.tracker:
+            self.remove(key)
+            del self.tracker[key]
+        node = Node(key, val)
+        self.add_to_tail(node)
+        self.tracker[key] = node
+        if len(self.tracker) > self.capacity:
+            head_next_key = self.head.next.key
+            self.remove(head_next_key)
+            del self.tracker[head_next_key]
 
-    def put(self, key, value):
-        if key in self.dic:
-            self.remove(self.dic[key])
-        n = Node(key, value)
-        self.add(n)
-        self.dic[key] = n
-        if len(self.dic) > self.capacity:
-            n = self.head.next
-            self.remove(n)
-            del self.dic[n.key]
-
-    def remove(self, node):
-        p = node.prev
-        n = node.next
-        p.next = n
-        n.prev = p
-
-    def add(self, node):
-        p = self.tail.prev
-        p.next = node
+    def remove(self, key):
+        node = self.tracker[key]
+        node.prev.next = node.next
+        node.next.prev = node.prev
+    
+    def add_to_tail(self, node):
+        prev = self.tail.prev
         self.tail.prev = node
-        node.prev = p
-        node.next = self.tail     
+        node.next = self.tail
+        node.prev = prev
+        prev.next = node
 
 
     def check(self, d: dict, h: Node, t: Node):
@@ -82,4 +82,4 @@ def run(arr: list):
             l.append(lru.put(el[0], el[1]))
     return l
 
-run([[1],[2,1],[2],[3,2],[2],[3]])
+run([[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]])
