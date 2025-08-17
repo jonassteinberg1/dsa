@@ -24,6 +24,8 @@ class AllOne:
                 self.remove(node)
                 self.add_to_tail(node)
                 self.strings[key].val += 1
+            elif (self.strings[key].val + 1) >= self.head.next.val and len(self.strings) == 2:
+                self.strings[key].val += 1
             elif (self.strings[key].val + 1) >= self.head.next.val:
                 self.remove(node)
                 self.next_head_swap(node)
