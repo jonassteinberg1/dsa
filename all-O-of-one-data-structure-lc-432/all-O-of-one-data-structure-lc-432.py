@@ -20,11 +20,17 @@ class AllOne:
             self.strings[key] = node
         else:
             node = self.strings[key]
-            self.strings[key].val += 1
-            if self.strings[key].val > self.tail.prev.val:
+            if (self.strings[key].val + 1) >= self.tail.prev.val:
                 self.remove(node)
                 self.add_to_tail(node)
-
+                self.strings[key].val += 1
+            elif (self.strings[key].val + 1) >= self.head.next.val:
+                self.remove(node)
+                self.next_head_swap(node)
+                self.strings[key].val += 1
+            else:
+                self.strings[key].val += 1
+            
     def dec(self, key: str) -> None:
         node = self.strings[key]
         if (self.strings[key].val - 1) == 0:
@@ -69,6 +75,14 @@ class AllOne:
         nex.prev = node
         node.prev = self.head 
         node.next = nex
+    
+    def next_head_swap(self, node):
+        n1 = self.head.next
+        n2 = n1.next
+        n1.next = node
+        node.prev = n1
+        node.next = n2
+        n2.prev = node
 
 
 def run(arr: list):
@@ -91,30 +105,27 @@ def run(arr: list):
     return l
 
 # expected
-# [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"d","a",null,null,"d","a"]
+# 
 
 run([('AllOne', []),
  ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
+ ('inc', ['a']),
  ('inc', ['b']),
  ('inc', ['b']),
- ('inc', ['b']),
  ('inc', ['c']),
- ('inc', ['c']),
- ('inc', ['c']),
- ('inc', ['c']),
- ('inc', ['c']),
- ('inc', ['c']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('inc', ['d']),
- ('getMaxKey', []),
- ('getMinKey', []),
- ('inc', ['b']),
- ('dec', ['d']),
- ('getMaxKey', []),
+ ('dec', ['c']),
  ('getMinKey', [])])
