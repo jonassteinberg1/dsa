@@ -1,7 +1,9 @@
 class Node:
     def __init__(self, key):
         self.key = key
-        self.prev, self.next = None
+        self.val = 1
+        self.prev = None
+        self.next = None
 
 class AllOne:
     def __init__(self):
@@ -14,29 +16,105 @@ class AllOne:
     def inc(self, key: str) -> None:
         if key not in self.strings:
             node = Node(key)
-            self.strings[key] = [1, node]
+            self.add_to_head(node)
+            self.strings[key] = node
         else:
-            self.strings[key][0] += 1
-            if self.strings[key][0]
+            node = self.strings[key]
+            self.strings[key].val += 1
+            if self.strings[key].val > self.tail.prev.val:
+                self.remove(node)
+                self.add_to_tail(node)
 
     def dec(self, key: str) -> None:
-        if self.strings[key][0] == 1:
-            node = self.strings[key][1]
+        node = self.strings[key]
+        if (self.strings[key].val - 1) == 0:
             self.remove(node)
             del self.strings[key]
+        elif (self.strings[key].val - 1) <= self.head.next.val:
+            self.remove(node)
+            self.add_to_head(node)
+            self.strings[key].val -= 1
+        elif (self.strings[key].val - 1) >= self.tail.prev.val:
+            self.remove(node)
+            self.add_to_tail(node)
+            self.strings[key].val -= 1
         else:
-            self.strings[key][0] -= 1
+            self.strings[key].val -= 1
+    
 
     def getMaxKey(self) -> str:
-        if key not in self.strings:
+        if len(self.strings) == 0:
             return ""
-        return self.tail
+        return self.tail.prev.key
 
     def getMinKey(self) -> str:
-        if key not in self.strings:
+        if len(self.strings) == 0:
             return ""
-        return self.head
+        return self.head.next.key
         
     def remove(self, node):
         node.prev.next = node.next
         node.next.prev = node.prev
+    
+    def add_to_tail(self, node):
+        prev = self.tail.prev
+        self.tail.prev = node
+        node.next = self.tail
+        prev.next = node
+        node.prev = prev
+
+    def add_to_head(self, node):
+        nex = self.head.next
+        self.head.next = node
+        nex.prev = node
+        node.prev = self.head 
+        node.next = nex
+
+
+def run(arr: list):
+    l = []
+    ao = AllOne()
+    l.append('null')
+    for el in arr[1:]:
+        if el[0] == "getMinKey":
+            min = ao.getMinKey()
+            l.append(min)
+        elif el[0] == "getMaxKey":
+            max = ao.getMaxKey()
+            l.append(max)
+        elif el[0] == "inc":
+            ao.inc(el[1][0])
+            l.append('null')
+        else:
+            ao.dec(el[1][0])
+            l.append('null')
+    return l
+
+# expected
+# [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"d","a",null,null,"d","a"]
+
+run([('AllOne', []),
+ ('inc', ['a']),
+ ('inc', ['b']),
+ ('inc', ['b']),
+ ('inc', ['b']),
+ ('inc', ['c']),
+ ('inc', ['c']),
+ ('inc', ['c']),
+ ('inc', ['c']),
+ ('inc', ['c']),
+ ('inc', ['c']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('inc', ['d']),
+ ('getMaxKey', []),
+ ('getMinKey', []),
+ ('inc', ['b']),
+ ('dec', ['d']),
+ ('getMaxKey', []),
+ ('getMinKey', [])])
