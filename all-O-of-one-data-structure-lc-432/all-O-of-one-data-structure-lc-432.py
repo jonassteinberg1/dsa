@@ -46,16 +46,13 @@ class AllOne:
             self.remove(node)
             self.add_to_tail(node)
             self.strings[key].val -= 1
-        elif (self.strings[key].val - 1) < self.tail.prev.val:
-            self.remove(node)
-            self.next_tail_swap(node)
-            self.strings[key].val -= 1
-        elif (self.strings[key].val - 1) > self.head.next.val and (self.strings[key].val - 1) <= self.head.next.next.val:
+        elif (self.strings[key].val - 1) <= self.head.next.next.val:
             self.remove(node)
             n1 = self.head.next.next
             self.head.next.next = node
             node.prev = self.head.next
-            node.next = n1.prev
+            node.next = n1
+            n1.prev = node
             self.strings[key].val -= 1
         else:
             self.strings[key].val -= 1
@@ -96,14 +93,6 @@ class AllOne:
         node.prev = n1
         node.next = n2
         n2.prev = node
-    
-    def next_tail_swap(self, node):
-        n1 = self.tail.prev
-        n2 = n1.prev
-        n1.prev = node
-        node.next = n1
-        node.prev = n2
-        n2.next = node
 
 
 def run(arr: list):
@@ -130,15 +119,13 @@ def run(arr: list):
 
 run([('AllOne', []),
  ('inc', ['hello']),
- ('inc', ['l']),
- ('inc', ['l']),
- ('inc', ['l']),
- ('inc', ['k']),
- ('inc', ['k']),
- ('inc', ['k']),
- ('inc', ['j']),
- ('inc', ['j']),
- ('inc', ['j']),
- ('dec', ['j']),
- ('dec', ['k']),
+ ('inc', ['world']),
+ ('inc', ['hello']),
+ ('dec', ['world']),
+ ('inc', ['hello']),
+ ('inc', ['leet']),
+ ('getMaxKey', []),
+ ('dec', ['hello']),
+ ('dec', ['hello']),
+ ('dec', ['hello']),
  ('getMaxKey', [])])
