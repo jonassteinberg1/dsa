@@ -15,7 +15,6 @@ class Solution:
                     self.prefix_sums.append((self.prefix_sums[idx-1][1] + 1, sum(self.w[0:idx+1])))
 
     def pickIndex(self) -> int:
-        print(self.prefix_sums)
         t = randint(1, self.w_sum)
         low = 0
         high = len(self.prefix_sums) - 1
