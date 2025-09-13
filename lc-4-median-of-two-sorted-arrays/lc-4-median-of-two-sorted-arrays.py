@@ -22,34 +22,32 @@ class Solution:
             lo = 0
             hi = self.nums2[-1]
             while lo <= hi:
-                middle = lo + (high - lo) // 2
+                middle = lo + (hi - lo) // 2
                 if self.nums1[0] == middle:
                     if len(self.nums1 + self.nums2) % 2 == 0:
                         middle = len(self.nums1 + self.nums2) // 2
                         return sum(sorted(self.nums1 + self.nums2)[middle-1:middle+1]) / 2
                     else:
                         return (sorted(self.nums1 + self.nums2))[len(self.nums1 + self.nums2) // 2]
-                elif self.nums1 > middle:
+                elif self.nums1[0] > middle:
                     lo = middle + 1
                 else:
-                    high = middle - 1
+                    hi = middle - 1
         elif len(self.nums2) < 2:
             lo = 0
             hi = self.nums1[-1]
             while lo <= hi:
-                middle = lo + (high - lo) // 2
+                middle = lo + (hi - lo) // 2
                 if self.nums2[0] == middle:
                     if len(self.nums1 + self.nums2) % 2 == 0:
                         middle = len(self.nums1 + self.nums2) // 2
                         return sum(sorted(self.nums1 + self.nums2)[middle-1:middle+1]) / 2
                     else:
                         return (sorted(self.nums1 + self.nums2))[len(self.nums1 + self.nums2) // 2]
-                elif self.nums2 > middle:
+                elif self.nums2[0] > middle:
                     lo = middle + 1
                 else:
-                    high = middle - 1
-    
-            
+                    hi = middle - 1       
         else:
             if len(self.nums1) <= len(self.nums2):
                 short = self.nums1
@@ -79,4 +77,4 @@ class Solution:
            
 
 
-print(Solution.findMedianSortedArrays([1, 3, 5, 900], [2]))
+print(Solution.findMedianSortedArrays([2], [1, 3, 5, 900]))
