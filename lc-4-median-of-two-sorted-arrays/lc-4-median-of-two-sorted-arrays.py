@@ -18,5 +18,27 @@ class Solution:
                 return sum((self.nums1 + self.nums2)[middle-1:middle+1]) / 2
             else:
                 return (self.nums1 + self.nums2)[len(self.nums1 + self.nums2) // 2]
+        else:
+            half = (len(self.nums1) + len(self.nums2) + 1) / 2
+            lo = max(0, half - self.nums2)
+            hi = min(self.nums1, half)
+            i = lo + (hi - lo) // 2
+            j = half - i
+            while lo <= hi:
+                if self.nums1[i-1] <= self.nums2[j] && self.nums2[j-1] <= self.nums1[i]:
+                    if len(self.nums1 + self.nums2) % 2 != 0:
+                        return max(self.nums1[i-1], self.nums2[j-1])
+                    else:
+                        return min(self.nums1[i], self.nums2[j])
+                elif self.nums1[i-1] > self.nums2[j]:
+                    move_left()
+                else:
+                    move_right()
+
+            
+        
+
+           
+
 
 print(Solution.findMedianSortedArrays([1, 2, 3], [4, 5, 6]))
