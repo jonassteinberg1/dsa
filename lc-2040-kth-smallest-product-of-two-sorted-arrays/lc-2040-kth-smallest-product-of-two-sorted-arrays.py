@@ -8,36 +8,68 @@ class Solution:
         # find the smallest x that contains at least k-such pairs which
         if nums1[0] < 0 and nums2[0] < 0:
             if nums1[0] < nums2[0]:
-                min = nums1[0] * nums2[-1]
+                minn = nums1[0] * nums2[-1]
                 max = nums1[-1] * nums2[-1]
             else:
-                min = nums1[-1] * nums2[0]
-                max = nums1[-1] * nums2[-1]
+                minn = nums1[-1] * nums2[0]
+                max = nums1[0] * nums2[0]
         elif nums1[0] < 0 and nums2[0] >= 0:
-            min = nums1[0] * nums2[-1]
+            minn = nums1[0] * nums2[-1]
             max = nums1[-1] * nums2[-1]
         elif nums1[0] >= 0 and nums2[0] < 0:
-            min = nums1[-1] * nums2[0]
+            minn = nums1[-1] * nums2[0]
             max = nums1[-1] * nums[-1]
         else:
-            min = nums1[0] * nums2[0]
+            minn = nums1[0] * nums2[0]
             max = nums1[-1] * nums1[-1]
         
-        low = min
+        low = minn
         high = max
         cursor1 = 0
         cursor2 = 0
         counter = 0
-        while low <= high:
+        ks = []
+        while low < high:
             mid = low + (high - low) // 2
-            if nums1[cursor1] * nums2[cursor2] <= mid and cursor2 < len(nums2):
+            if nums1[cursor1] * nums2[cursor2] <= mid:
                 counter += 1
-                cursor2 += 1
-            elif nums1[cursor1] * nums2[cursor2] <= mid and cursor1 < len(nums1) - 1:
-                    counter += 1
+                if cursor2 < len(nums2) - 1:
+                    cursor2 += 1
+                elif cursor1 < len(nums1) - 1:
                     cursor1 += 1
+                    cursor2 = 0
+            else:
+                if counter >= k:
+                    ks.append(mid)
+                high = mid - 1
+                counter = 0
+                cursor1 = 0
+                cursor2 = 0
+        return min(ks)
 
 s = Solution()
-print(s.kthSmallestProduct([1, 2, 3, 4], [5, 6, 7, 8], 2))
+print(s.kthSmallestProduct([-1, 1, 2, 3, 4], [-8, -7, -6, -5], 3))
 
+# r & l neg
+[-2 -1], [-2, -1]
 
+# r & l neg-to-pos
+[-1, 0], [-1, 0]
+
+# l neg, r neg-to-pos
+[-2 -1], [-1, 0]
+
+# l neg-to-pos, r neg
+[-1, 0], [-2, -1]
+
+# l pos, r neg-to-pos
+[0, 1], [-1, 0]
+
+# l neg, r pos
+[-1, 0], [0, 1]
+
+# l pos, r neg
+[0, 1], [-2, -1]
+
+# r & l pos
+[0, 1], [0, 1]
