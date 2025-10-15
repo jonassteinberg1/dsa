@@ -21,6 +21,26 @@ class Solution:
             elif nums2_zeroes and x >= 0:
                 count += len(nums1_zeroes) * len(nums2_zeroes)
             
+            if x < 0:
+                nums2_negs_incrementor = 0
+                for idx, el in enumerate(nums1_poss):
+                    while len(nums2_negs) - nums2_negs_incrementor > 0:
+                        if el * nums2_negs[nums2_negs_incrementor] > x:
+                            incrementor += 1
+                            if incrementor == len(nums2):
+                                incrementor = 0
+                                break
+                        else:
+                            count += len(nums2) - incrementor
+                            break
+            
+            # TO DO
+            # 1. build out  if el * nums2_negs[nums2_negs_incrementor] <= x for nums1_poss x nums2_negs
+            # 2. repeat for other relevant segments
+            # 3. build out x > 0 NOTE: x == 0 already handled above
+
+
+            
 
 
         def count_leq(x):
