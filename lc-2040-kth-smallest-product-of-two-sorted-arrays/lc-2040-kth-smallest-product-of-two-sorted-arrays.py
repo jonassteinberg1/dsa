@@ -24,54 +24,58 @@ class Solution:
             if x < 0:
                 nums2_negs_incrementor = 0
                 for idx, el in enumerate(nums1_poss):
-                    while len(nums2_negs) - nums2_negs_incrementor > 0:
-                        if el * nums2_negs[nums2_negs_incrementor] > x:
-                            incrementor += 1
-                            if incrementor == len(nums2):
-                                incrementor = 0
+                    while nums2_negs_incrementor < len(nums2_negs):
+                        if el * nums2_negs[len(nums2_negs)- nums2_negs_incrementor - 1] > x:
+                            nums2_negs_incrementor += 1
+                            if nums2_negs_incrementor == len(nums2_negs):
+                                nums2_negs_incrementor = 0
                                 break
                         else:
-                            count += len(nums2) - incrementor
+                            count += len(nums2_negs) - nums2_negs_incrementor
+                            nums2_negs_incrementor = 0
                             break
-            
+                
+                nums2_poss_incrementor = 0
+                for idx, el in enumerate(nums1_negs):
+                    while nums2_poss_incrementor < len(nums2_poss):
+                        if el * nums2_poss[len(nums2_poss) - nums2_poss_incrementor - 1] > x:
+                            nums2_poss_incrementor += 1
+                            if nums2_poss_incrementor == len(nums2_poss):
+                                nums2_poss_incrementor = 0
+                                break
+                        else:
+                            count += len(nums2_negs) - nums2_poss_incrementor
+                            break
+            elif x > 0:
+                nums2_negs_incrementor = 0
+                for idx, el in enumerate(nums1_poss):
+                    while nums2_negs_incrementor < len(nums2_negs):
+                        if el * nums2_negs[nums2_negs_incrementor] > x:
+                            nums2_negs_incrementor += 1
+                            if nums2_negs_incrementor == len(nums2_negs):
+                                nums2_negs_incrementor = 0
+                                break
+                        else:
+                            count += len(nums2_negs) - nums2_negs_incrementor
+                            break
+                
+                nums2_poss_incrementor = 0
+                for idx, el in enumerate(nums1_negs):
+                    while nums2_poss_incrementor < len(nums2_poss):
+                        if el * nums2_poss[len(nums2_poss) - nums2_poss_incrementor - 1] > x:
+                            nums2_poss_incrementor += 1
+                            if nums2_poss_incrementor == len(nums2_poss):
+                                nums2_poss_incrementor = 0
+                                break
+                        else:
+                            count += len(nums2_negs) - nums2_poss_incrementor
+                            break
+            return count
+    
             # TO DO
             # 1. build out  if el * nums2_negs[nums2_negs_incrementor] <= x for nums1_poss x nums2_negs
             # 2. repeat for other relevant segments
             # 3. build out x > 0 NOTE: x == 0 already handled above
-
-
-            
-
-
-        def count_leq(x):
-            count = 0
-            incrementor = 0
-            for idx, el in enumerate(nums1):
-                if el > 0:
-                    while len(nums2) - incrementor > 0:
-                        if el * nums2[len(nums2) - incrementor - 1] > x:
-                            incrementor += 1
-                            if incrementor == len(nums2):
-                                incrementor = 0
-                                break
-                        else:
-                            count += len(nums2) - incrementor
-                            if (idx < len(nums1) - 1) and ((nums1[idx] < 0 and nums1[idx + 1] >= 0) or (nums1[idx] >= 0 and nums1[idx+1] < 0) or (nums1[0] < 0 and nums1[-1] <0) or (nums2[0] < 0 and nums2[-1] <0)):
-                                incrementor = 0
-                            break
-                else:
-                    while incrementor < len(nums2):
-                        if el * nums2[incrementor] > x:
-                            incrementor += 1
-                            if incrementor == len(nums2):
-                                incrementor = 0
-                                break
-                        else:
-                            count += len(nums2) - incrementor
-                            if (idx < len(nums1) - 1) and ((nums1[idx] < 0 and nums1[idx + 1] >= 0) or (nums1[idx] >= 0 and nums1[idx+1] < 0) or (nums1[0] < 0 and nums1[-1] <0) or (nums2[0] < 0 and nums2[-1] <0)):
-                                incrementor = 0
-                            break
-            return count
         
         while low < high:
             mid = low + (high - low) // 2
@@ -82,8 +86,6 @@ class Solution:
                 low = mid + 1
                 smallest = low
         return smallest
-
-
 
 s = Solution()
 print(s.kthSmallestProduct([-3,-1,5,6], [-10,-7,-6,-5,-5,-4,-1,7,8], 28))
