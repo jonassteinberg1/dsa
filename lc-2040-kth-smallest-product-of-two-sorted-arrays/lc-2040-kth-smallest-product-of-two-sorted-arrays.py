@@ -17,23 +17,23 @@ class Solution:
             count = 0
             
             if x < 0:
+                nums2_negs_incrementor = -1
                 for idx, el in enumerate(nums1_poss):
-                    nums2_negs_incrementor = 0
-                    while nums2_negs_incrementor < len(nums2_negs):
-                        if el * nums2_negs[len(nums2_negs) - nums2_negs_incrementor - 1] > x:
-                            nums2_negs_incrementor += 1
-                        else:
-                            count += len(nums2_negs) - nums2_negs_incrementor
+                    while nums2_negs_incrementor + 1 < len(nums2_negs):
+                        if el * nums2_negs[nums2_negs_incrementor + 1] > x:
                             break
+                        else:
+                            nums2_negs_incrementor += 1
+                    count += nums2_negs_incrementor + 1
                 
+                nums2_poss_incrementor = 0
                 for idx, el in enumerate(nums1_negs):
-                    nums2_poss_incrementor = 0
                     while nums2_poss_incrementor < len(nums2_poss):
                         if el * nums2_poss[nums2_poss_incrementor] > x:
                             nums2_poss_incrementor += 1
                         else:
-                            count += len(nums2_poss) - nums2_poss_incrementor
                             break
+                    count += len(nums2_poss) - nums2_poss_incrementor
             elif x >= 0:
                 # zeroes automatically make it
                 count += (len(nums1_zeroes) * len(nums2)) + (len(nums2_zeroes) * len(nums1_negs)) + (len(nums2_zeroes) * len(nums1_poss))
@@ -41,23 +41,23 @@ class Solution:
                 # negs automatically make it
                 count += (len(nums1_poss) * len(nums2_negs)) + (len(nums1_negs) * len(nums2_poss))
 
+                nums2_poss_incrementor = len(nums2_poss) - 1
                 for idx, el in enumerate(nums1_poss):
-                    nums2_poss_incrementor = 0
-                    while nums2_poss_incrementor < len(nums2_poss):
-                        if el * nums2_poss[len(nums2_poss) - nums2_poss_incrementor - 1] > x:
-                            nums2_poss_incrementor += 1
+                    while nums2_poss_incrementor > - 1:
+                        if el * nums2_poss[nums2_poss_incrementor] > x:
+                            nums2_poss_incrementor -= 1
                         else:
-                            count += len(nums2_poss) - nums2_poss_incrementor
                             break
+                    count += nums2_poss_incrementor + 1
                 
+                nums2_negs_incrementor = len(nums2_negs)
                 for idx, el in enumerate(nums1_negs):
-                    nums2_negs_incrementor = 0
-                    while nums2_negs_incrementor < len(nums2_negs):
-                        if el * nums2_negs[nums2_negs_incrementor] > x:
-                            nums2_negs_incrementor += 1
-                        else:
-                            count += len(nums2_negs) - nums2_negs_incrementor
+                    while nums2_negs_incrementor > 0:
+                        if el * nums2_negs[nums2_negs_incrementor - 1] > x:
                             break
+                        else:
+                            nums2_negs_incrementor -= 1
+                    count += len(nums2_negs) - nums2_negs_incrementor
 
             return count
         
@@ -72,4 +72,4 @@ class Solution:
         return smallest 
 
 s = Solution()
-print(s.kthSmallestProduct([-9,6,10], [-7,-1,1,2,3,4,4,6,9,10], 15))
+print(s.kthSmallestProduct([-2,-1,0,1,2], [-3,-1,2,4,5], 3))
