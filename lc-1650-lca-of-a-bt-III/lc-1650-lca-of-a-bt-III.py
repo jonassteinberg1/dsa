@@ -23,11 +23,22 @@ class RecursiveSum:
             self.tree_sum += node.val
         return self.tree_sum
     
-
-n4 = Node(4, None, None)
-n3 = Node(3, None, None)
-n2 = Node(2, n4, None)
-n1 = Node(1, n2, n3)
+n15 = Node(15, None, None)
+n14 = Node(14, None, None)
+n13 = Node(13, None, n15)
+n12 = Node(12, n14, None)
+n11 = Node(11, None, None)
+n10 = Node(10, n12, n13)
+n9 = Node(9, n10, None)
+n8 = Node(8, n11, n9)
+n7 = Node(7, None, None)
+n6 = Node(6, n7, n8)
+n5 = Node(5, None, None)
+n4 = Node(4, n5, n6)
+n3 = Node(3, None, n4)
+n2 = Node(2, n3, None)
+n1 = Node(1, n2, None)  # root
 
 r = RecursiveSum()
 print(r.return_sum(n1))
+
