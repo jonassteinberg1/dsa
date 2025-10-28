@@ -4,16 +4,18 @@ class Node:
         self.left = left
         self.right = right
 
-class RecursiveSum:
+class RecursiveDfsPreOrderSum:
     def __init__(self):
-        pass
+        self.tree_sum = 0
     
-    def return_sum(self, node: Node):
-        if node is None: 
-            return 0
-        print("enter", node.val)
-        return node.val + self.return_sum(node.left) + self.return_sum(node.right)
-        print("exit", node.val)
+    def preorder(self, node: Node):
+        if node is None:
+            return
+        else:
+            self.tree_sum += node.val
+            self.preorder(node.left)
+            self.preorder(node.right)
+        return self.tree_sum
     
 n15 = Node(15, None, None)
 n14 = Node(14, None, None)
@@ -31,7 +33,7 @@ n3 = Node(3, None, n4)
 n2 = Node(2, n3, None)
 n1 = Node(1, n2, None)  # root
 
-r = RecursiveSum()
-print(r.return_sum(n1))
+r = RecursiveDfsPreOrderSum()
+print(r.preorder(n1))
 
 # pick up analyzing how it seems like self.return_sum(node.right) is called "at the same time" as node.val + self.return_sum(node.left)
