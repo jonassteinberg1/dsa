@@ -6,16 +6,13 @@ class Node:
 
 class RecursiveDfsInOrderSum:
     def __init__(self):
-        self.tree_sum = 0
+        pass
     
     def inorder(self, node: Node):
         if node is None:
             return 0
-        else:
-            self.inorder(node.left)
-            self.tree_sum += node.val
-            self.inorder(node.right)
-        return self.tree_sum
+        return self.inorder(node.left) + node.val + self.inorder(node.right)
+            
     
 n15 = Node(15, None, None)
 n14 = Node(14, None, None)
