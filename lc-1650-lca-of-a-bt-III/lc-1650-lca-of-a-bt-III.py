@@ -9,10 +9,7 @@ class Solution:
     def lowestCommonAncestor(self, p: Node, q: Node) -> Node:
         if p is q:
             return p
-        elif p.parent:
-            self.lowestCommonAncestor(p.parent, q)
-        elif q.parent:
-            self.lowestCommonAncestor(p, q.parent)
+        self.lowestCommonAncestor(p.parent, q.parent)
         
 
 n1 = Node(1)
