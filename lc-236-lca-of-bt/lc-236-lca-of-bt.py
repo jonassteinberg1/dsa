@@ -6,11 +6,11 @@ class TreeNode:
 
 class Solution:
     def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-        r0 = root
-        if root is q and root is q:
-            return r0
-        self.lowestCommonAncestor(root.left, p, q)
-        self.lowestCommonAncestor(root.right, p, q)
+        while root is not None:
+            self.lowestCommonAncestor(root.left, p, q)
+            self.lowestCommonAncestor(root.right, p, q)
+        
+        
         
 
 #n3 = TreeNode(3)
@@ -32,16 +32,51 @@ class Solution:
 #n1.left = n0
 #n1.right = n8
 
-n0 = TreeNode(0)
+#n0 = TreeNode(0)
+#n1 = TreeNode(1)
+#n2 = TreeNode(2)
+#n3 = TreeNode(3)
+#n4 = TreeNode(4)
+#n0.left = n1
+#n1.left = n3
+#n0.right = n2
+#n2.right = n4
+
+#n0 = TreeNode(0)
+#n1 = TreeNode(1)
+#n2 = TreeNode(2)
+#n0.left = n1
+#n1.left = n2
+
 n1 = TreeNode(1)
 n2 = TreeNode(2)
 n3 = TreeNode(3)
 n4 = TreeNode(4)
-n0.left = n1
-n1.left = n3
-n0.right = n2
-n2.right = n4
+n5 = TreeNode(5)
+n6 = TreeNode(6)
+n7 = TreeNode(7)
+n8 = TreeNode(8)
+n9 = TreeNode(9)
+n10 = TreeNode(10)
+
+n1.left = n2
+n2.left = n3
+n3.left = n4
+n2.right = n5
+n5.right = n10
+n5.left = n6
+n6.left = n7
+n7.left = n8
+n7.right = n9
+
+
+lca = n2
 
 s = Solution()
 #s.lowestCommonAncestor(n3, n5, n1)
-s.lowestCommonAncestor(n0, n3, n4)
+try:
+    assert s.lowestCommonAncestor(n1, n4, n8) == lca
+    print(f"lac is {lca.x}")
+except AssertionError:
+    print("incorrect ancestor")
+#s.lowestCommonAncestor(n0, n1, n2)
