@@ -1,4 +1,4 @@
-* **Time-box each attempt:** Work 20–30 minutes; if there’s no new progress after ~10 minutes, take one tiny hint; if still stuck by ~30, read the solution, close it, and immediately re-implement from scratch.
+* **Time-box each attempt:** Work 20–30 minutes; if there’s no new progress after ~10 minutes, take one tiny hint; if still stuck by ~30, read the solution, close it, and immediately re-implement from scratch. When studying the solution it is critical to understand why the solution works, as well as the code.
 * **Retrieval over review:** Always solve from a blank start without looking; name the pattern before you begin and state the invariant you’ll rely on.
 * **One-line note per problem:** Record just (a) the pattern, (b) the key invariant/idea, (c) edge cases, and (d) one sentence on what you missed.
 * **Spaced re-dos:** Re-implement from scratch the next day (D+1) and again a week later (D+7); if you can do it cleanly, retire it.
@@ -285,7 +285,17 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
 3. LCA (postorder combine): Each call returns either the LCA, one target node, or None; if two non-None values arise among (left, right, self-match), this node is the LCA.
    Lowest Common Ancestor of a Binary Tree (236), Lowest Common Ancestor of a Binary Tree II (1644), Lowest Common Ancestor of a Binary Tree IV (1676)
   - dng
-  - 
+  - D+1: 11/04/2025
+    - did not make due to submission to SRECON26
+ .  - completing on 11/05/2026
+  - D+7: 11/11/2025
+
+  notes:
+    - postorder, at least in this case, is recursing root down the tree each time; it seems like
+      "root" is staying the same because we're used to seeing the variable name "root", which seems
+      static, but in fact the "root" we compare in conditional cases is the parametric root -- so when
+      we make recursive calls and pass in root.left and root.right, respectively, we are able to
+      compare them as root and root is being reassigned with each recursive call.
 
 4. BST validation (bounds): For every node with value v, the invariant low < v < high holds; recurse left with (low, v) and right with (v, high).
    Validate Binary Search Tree (98), Construct Binary Search Tree from Preorder Traversal — maintain bounds as you consume preorder (1008)
@@ -526,3 +536,11 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
 ###############
 #    Canon    #
 ###############
+
+
+##################
+#    D+1, D+7    #
+##################
+
+236: 11/04/2025
+236: 11/11/2025
