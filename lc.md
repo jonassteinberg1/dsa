@@ -287,7 +287,12 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
   - dng
   - D+1: 11/04/2025
     - did not make due to submission to SRECON26
- .  - completing on 11/05/2026
+    - completing on 11/05/2026
+    - was able to recall but doesn't really count because I was using gippity extensively beforehand
+    - 11/06/2025
+      - had gippity create me an augmenting problem; it came up with one that was a classic LCA problem
+        but given targets may or may not exist
+    - next step is to have it give me another problem
   - D+7: 11/11/2025
 
   notes:
@@ -542,5 +547,7 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
 #    D+1, D+7    #
 ##################
 
-236: 11/04/2025
+236: 11/05/2025
 236: 11/11/2025
+236 Augmentation: 11/07/2025
+236 Augmentation: 11/12/2025
