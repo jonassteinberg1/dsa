@@ -7,25 +7,34 @@ class Node:
         self.right = None
 
 class LcaIfPresent:
-    def lcaIfPresent(self, root: Node, p: int, q: int):
+    def lcaIfPresent(self, root: Node, p: Node, q: Node):
+        # base cases
         if root is None:
             return None, False, False
         if root is p:
             return root, True, False
         if root is q:
             return root, False, True
+        
+        # postorder
         left, l_sp, r_sp = self.lcaIfPresent(root.left, p, q)
         right, l_sq, r_sq = self.lcaIfPresent(root.right, p, q)
-        seen_p_here = l_sp or r_sp or (root == p)
-        seen_q_here = l_sq or r_sq or (root == q)
+        
+        # postorder logic: tracking
+        seen_p_here = l_sp or r_sp or (root is p)
+        seen_q_here = l_sq or r_sq or (root is q)
+
+        # postorder logic: combine step
         if left is not None and right is not None:
-            return root, seen_p_here, seen_q_here
+            cand = root
         elif left is not None:
-            return left, seen_p_here, seen_q_here
+            cand = left
         elif right is not None:
-            return right, seen_p_here, seen_q_here
+            cand = right
         else:
-            return None, seen_p_here, seen_q_here
+            cand = None
+        
+        return cand, seen_p_here, seen_q_here
         
         
 
