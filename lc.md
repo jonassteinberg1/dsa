@@ -293,6 +293,10 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
       - had gippity create me an augmenting problem; it came up with one that was a classic LCA problem
         but given targets may or may not exist
     - next step is to have it give me another problem
+    - 11/092025
+      - had gippity give me another problem: "at least two targets", but was unable to solve
+        and still feel I have many definitions it uses to define tree recursion solution
+        features to understand
   - D+7: 11/11/2025
 
   notes:
