@@ -297,6 +297,11 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
       - had gippity give me another problem: "at least two targets", but was unable to solve
         and still feel I have many definitions it uses to define tree recursion solution
         features to understand
+    - 11/10/2025
+      - worked on 426 which is inorder sorting of a BST to produce a sorted circular doubly linked list
+        - the critical insights are that since the linked list needs to be sorted, and inorder dfs of a bst emits a sorted list, AND each subtree's leftmost and rightmost children are the min and max of that subtree, respectively, if you
+          use inorder dfs and make the inorder logic the list linkage, you produce a sorted circular doubly linked list; at the end you finally
+          link global minimum (head) and global maximum (tail)
   - D+7: 11/11/2025
 
   notes:
@@ -555,3 +560,5 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
 236: 11/11/2025
 236 Augmentation: 11/07/2025
 236 Augmentation: 11/12/2025
+426: 11/11/2025
+426: 11/18/2025
