@@ -1,3 +1,4 @@
+
 from typing import Optional
 
 class Node:
@@ -8,28 +9,31 @@ class Node:
 
 class Solution:
     def treeToDoublyList(self, root: 'Node') -> 'Node':
-        stack = []
-        head = prev = None
-        curr = root
+        stack = [] # iterative tree
+        head = prev = None # 
+        curr = root # have to start somewhere
+
+        if not root:
+            return root
         
         while stack or curr:
-            while curr:
+            if curr:
                 stack.append(curr)
                 curr = curr.left
-            node = stack.pop()
-            if prev:
-                prev.right = node
-                node.left = prev
             else:
-                head = node
-            
-            if node.right:
-                stack.append(node.right)
-
-            prev = node
+                node = stack.pop()
+                if prev:
+                    prev.right = node
+                    node.left = prev
+                else:
+                    head = node
+                prev = node
+                curr = node.right
         
         head.left = prev
         prev.right = head
+
+        return head
 
 
 

@@ -9,17 +9,16 @@ class BstToDll:
         stack = []
         head = prev = None
         curr = root
-        stack.append(curr)
 
         if not root:
             return root
 
         while stack or curr:
-            if curr.left:
-                curr = curr.left
+            if curr:
                 stack.append(curr)
+                curr = curr.left
             else:
-                node = stack.pop
+                node = stack.pop()
                 if prev:
                     node.left = prev
                     prev.right = node
