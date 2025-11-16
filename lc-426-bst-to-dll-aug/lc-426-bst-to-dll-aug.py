@@ -11,7 +11,7 @@ class BstToDll:
         curr = root
 
         if not root:
-            return root
+            return (None, None)
 
         while stack or curr:
             if curr:
@@ -23,9 +23,9 @@ class BstToDll:
                     node.left = prev
                     prev.right = node
                 else:
-                    head = curr
+                    head = node
                 
-                prev = curr
+                prev = node
                 curr = node.right
         
         return (head, prev)
