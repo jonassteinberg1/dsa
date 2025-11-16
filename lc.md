@@ -278,6 +278,9 @@ Use a **canon filter**: only add a problem if it gives you a *new invariant/tric
 
 1. DFS traversals: Preorder does work before children; inorder visits left, then node, then right; postorder ensures both subtrees are fully processed before using the node’s result.
    Binary Tree Preorder Traversal (144), Binary Tree Inorder Traversal (94), Binary Tree Postorder Traversal (145)
+   - Binary Tree Inorder Traversal
+     - 11/15/2025
+       - dng but was able to gippity my way to iterative LC 426
 
 2. Level-order (BFS): The queue always contains exactly the nodes of the current frontier; popping all of them produces the next level.
    Binary Tree Level Order Traversal (102), Binary Tree Zigzag Level Order Traversal (103), Average of Levels in Binary Tree (637)
