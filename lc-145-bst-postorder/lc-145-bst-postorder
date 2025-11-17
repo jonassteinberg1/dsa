@@ -1,0 +1,49 @@
+from typing import Optional, List
+
+# Definition for a binary tree node.
+class Node:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Solution:
+    def postorderTraversal(self, root: Optional[Node]) -> List[int]:
+        stack = []
+        output = []
+        curr = root
+        last_visited = None
+        
+        while stack or curr:
+            if curr:
+                stack.append(curr)
+                curr = curr.left
+            else:
+                top = stack[-1]
+                if (top.right) and (last_visited != top.right):
+                    curr = top.right
+                else:
+                    output.append(stack.pop().val)
+                    last_visited = top
+        
+        return output
+    
+n7 = Node(7)
+n8 = Node(8)
+n4 = Node(4)
+n5 = Node(5, n7, n8)
+n6 = Node(6)
+n2 = Node(2, n4, n5)
+n3 = Node(3, None, n6)
+root = Node(1, n2, n3)
+
+s = Solution()
+s.postorderTraversal(root)
+# Shape:
+#         1
+#       /   \
+#      2     3
+#     / \     \
+#    4   5     6
+#       / \
+#      7   8
