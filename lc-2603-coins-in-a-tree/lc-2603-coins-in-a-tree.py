@@ -26,14 +26,16 @@ class Solution:
         while d:
             u = d.popleft()
             # no longer in the graph; deleting would be cleaner
-            degrees[u] = 0
-            # can also skip "v" and just use the expression
-            # adj[u][0] everywhere but u and v are "node" and "neighbor"
-            # conventions
-            v = adj[u][0]
-            degrees[v] -= 1
-            if degrees[v] == 1 and coins[v] == 0:
-                d.append(v)
+            if degrees[u] > 0:
+                degrees[u] = 0
+                # can also skip "v" and just use the expression
+                # adj[u][0] everywhere but u and v are "node" and "neighbor"
+                # conventions
+                for v in adj[u]:
+                    if degrees[v] > 0:
+                        degrees[v] -= 1
+                        if degrees[v] == 1 and coins[v] == 0:
+                            d.append(v)
         
         for u in adj.keys():
             if degrees[u] == 1:
