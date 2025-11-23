@@ -41,15 +41,28 @@ class Solution:
                 # is required for endpoint discount
                 d.append((u, 0))
         
+        # endpoint discount
         while d:
             u = d.popleft()
-            depth = u[1]
-            if depth < 2:
-                degrees[u] = 0
-            for v in adj[u]:
-                degrees[v] -= 1
-                if degrees[v] == 1:
-                    d.append((v, depth + 1))
+            if degrees[u[0]] > 0:
+                depth = u[1]
+                if depth < 2:
+                    degrees[u[0]] = 0
+                    for v in adj[u[0]]:
+                        if degrees[v] > 0:
+                            degrees[v] -= 1
+                            if degrees[v] == 1:
+                                d.append((v, depth + 1))
+        
+        # the values of degrees are ints so since
+        # dict.values() returns a list it is in this
+        # case a list of ints which is the natural
+        # input for sum
+        remaining_edges = sum(degrees.values())//2
+
+        if remaining_edges == 0:
+            return 0
+        return 2 * remaining_edges
             
 
 
