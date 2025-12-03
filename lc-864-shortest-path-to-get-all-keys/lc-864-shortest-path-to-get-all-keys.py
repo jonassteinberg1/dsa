@@ -4,16 +4,8 @@ from typing import List
 class Solution:
     def shortestPathAllKeys(self, grid: List[str]) -> int:
 
-        locks = 0
-        lock_moves = 0
-        collected_keys = []
-
-        for i, l in enumerate(grid):
-            for j in l:
-                if j in ['a', 'b', 'c', 'd', 'e', 'f', 'g']:
-                    locks += 1
-
-        class Found(Exception): pass
+        class Found(Exception):
+            pass
 
         try:
             for i, l in enumerate(grid):
@@ -21,7 +13,7 @@ class Solution:
                     if m == '@':
                         raise Found
         except Found:
-            start = [i, j]
+            start = [i, j, set()]
 
         d = deque()
         d.append(start)
@@ -34,20 +26,18 @@ class Solution:
                 move = []
                 # index condition for looking up
                 if i > 0 and [i-1, j] not in seen:
-                    move.append([i-1, j])
+                    move.append([i-1, j], set())
                 # index condition for looking down
                 if i < len(grid) - 1 and [i+1, j] not in seen:
-                    move.append([i+1, j])
+                    move.append([i+1, j], set())
                 # index condition for looking left
                 if j > 0 and [i, j-1] not in seen:
-                    move.append([i, j-1])
+                    move.append([i, j-1], set())
                 # index condition for looking right
                 if j < len(l) - 1 and [i, j+1] not in seen:
-                    move.append([i, j+1])
+                    move.append([i, j+1], set())
         
                 return move
-
-        class NoMoreLocks(Exception): pass
 
         while d:
             # remember -- this is fifo so we must popleft()
@@ -59,22 +49,14 @@ class Solution:
                     pass
                 elif grid[move[0]][move[1]] == '.':
                     d.append(move)
-                    lock_moves += 1
                 elif grid[move[0]][move[1]] in ['a', 'b', 'c', 'd', 'e', 'f']:
+                    move[2].add(grid[move[0]][move[1]])
                     d.append(move)
-                    lock_moves += 1
-                    locks -= 1
-                    collected_keys.append(grid[move[0]][move[1]])
-                    try:
-                        if locks == 0:
-                            raise NoMoreLocks
-                    except NoMoreLocks:
-                        return lock_moves
                 else:
-                    if grid[move[0]][move[1]].lower() in collected_keys:
+                    if grid[move[0]][move[1]].lower() in move[2]:
                         d.append(move)
 
-        return lock_moves
+        return 
 
 s = Solution()
 s.shortestPathAllKeys(["@..aA","..B#.","....b"])
