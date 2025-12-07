@@ -14,6 +14,9 @@ class Solution:
 
         for h in heightMap:
             for i, j in enumerate(h):
+                # left: consider dropping lists that can't
+                # be trap candidates for example the edge lists
+                # and also drop the edge neighbors
                 # up
                 if i > 0:
                     h[i - 1] - h[i]
