@@ -15,35 +15,34 @@ class Solution:
         except Found:
             start = [i, j, set(), 0]
         
-        keys = []
+        keys = set()
 
         for i, l in enumerate(grid):
             for j in l:
                 if j in ['a', 'b', 'c', 'd', 'e', 'f', 'g']:
-                    keys.append(j)
+                    keys.add(j)
 
         d = deque()
         d.append(start)
-        seen = []
-        seen.append(start)
+        seen = dict()
+        seen[tuple(start[0:2])] = [start[2]]
 
         def look(node: List[int]) -> List[str]:
                 i = node[0]
                 j = node[1]
-                key_state = node[2]
                 move = []
                 # index condition for looking up
-                if i > 0 and [i-1, j, key_state] not in seen:
-                    move.append([i-1, j, key_state])
+                if i > 0:
+                    move.append([i-1, j])
                 # index condition for looking down
-                if i < len(grid) - 1 and [i+1, j, key_state] not in seen:
-                    move.append([i+1, j, key_state])
+                if i < len(grid) - 1:
+                    move.append([i+1, j])
                 # index condition for looking left
-                if j > 0 and [i, j-1, key_state] not in seen:
-                    move.append([i, j-1, key_state])
+                if j > 0:
+                    move.append([i, j-1])
                 # index condition for looking right
-                if j < len(l) - 1 and [i, j+1, key_state] not in seen:
-                    move.append([i, j+1, key_state])
+                if j < len(grid[i]) - 1:
+                    move.append([i, j+1])
         
                 return move
 
@@ -52,24 +51,55 @@ class Solution:
             current = d.popleft() # need to mark visited next
             moves = look(current)
             for move in moves:
-                seen.append(move[0:3])
+                temp = set()
+                temp = current[2].copy()
                 if grid[move[0]][move[1]] == '#':
                     pass
-                elif grid[move[0]][move[1]] == '.':
-                    move[3] += 1
-                    d.append(move)
-                elif grid[move[0]][move[1]] in keys:
-                    move[2].add(grid[move[0]][move[1]])
-                    if move[2] == keys:
-                        move[3] += 1
-                        return move[3]
-                    move[3] += 1
-                    d.append(move)
-                else:
-                    if grid[move[0]][move[1]].lower() in move[2]:
-                        move[3] += 1
+                elif grid[move[0]][move[1]] == '.' or grid[move[0]][move[1]] == '@':
+                    move.append(temp)
+                    try:
+                        seen[tuple(move[0:2])]
+                        if temp not in seen[tuple(move[0:2])]:
+                            seen[tuple(move[0:2])].append(temp)
+                            move.append(current[3] + 1)
+                            d.append(move)
+                    except KeyError:
+                        seen[tuple(move[0:2])] = [temp]
+                        move.append(current[3] + 1)
                         d.append(move)
+                elif grid[move[0]][move[1]] in keys:
+                    temp.add(grid[move[0]][move[1]])
+                    move.append(temp)
+                    if move[2] == keys:
+                        move.append(current[3] + 1)
+                        print(move[3])
+                        return move[3]
+                    try:
+                        seen[tuple(move[0:2])]
+                        if temp not in seen[tuple(move[0:2])]:
+                            seen[tuple(move[0:2])].append(temp)
+                            move.append(current[3] + 1)
+                            d.append(move)
+                    except KeyError:
+                        seen[tuple(move[0:2])] = [temp]
+                        move.append(current[3] + 1)
+                        d.append(move)
+                else:
+                    if grid[move[0]][move[1]].lower() in temp:
+                        move.append(temp)
+                        try:
+                            seen[tuple(move[0:2])]
+                            if temp not in seen[tuple(move[0:2])]:
+                                seen[tuple(move[0:2])].append(temp)
+                                move.append(current[3] + 1)
+                                d.append(move)
+                        except KeyError:
+                            seen[tuple(move[0:2])] = [temp]
+                            move.append(current[3] + 1)
+                            d.append(move)
+        
+        return -1
 
 s = Solution()
-s.shortestPathAllKeys(["@..aA","..B#.","....b"])
+s.shortestPathAllKeys(["@...a",".###A","b.BCc"])
 
